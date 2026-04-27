@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: media-ai-api
+spec:
+  selector:
+    app: media-ai-api
+  ports:
+    - port: 80
+      targetPort: 8000

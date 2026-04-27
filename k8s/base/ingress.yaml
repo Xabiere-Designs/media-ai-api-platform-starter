@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: media-ai-api
+  annotations:
+    kubernetes.io/ingress.class: alb
+spec:
+  rules:
+    - host: api.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: media-ai-api
+                port:
+                  number: 80

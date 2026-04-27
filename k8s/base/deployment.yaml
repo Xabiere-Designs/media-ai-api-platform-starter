@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media-ai-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: media-ai-api
+  template:
+    metadata:
+      labels:
+        app: media-ai-api
+    spec:
+      serviceAccountName: media-ai-api
+      containers:
+        - name: api
+          image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/media-ai-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: media-ai-config
+            - secretRef:
+                name: media-ai-secret
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 10001
+            capabilities:
+              drop: ["ALL"]
